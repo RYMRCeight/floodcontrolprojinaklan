@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-100 text-gray-800">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Control Projects sa Aklan</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen">
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="flex flex-col items-center">
+            <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-gray-700">Loading...</p>
+        </div>
+    </div>
+    
+    <header class="bg-blue-600 p-4 md:p-6 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <h1 class="text-xl md:text-3xl font-bold text-white tracking-wider mb-4 md:mb-0">Flood Control Projects sa Aklan</h1>
+            <div class="relative w-full md:w-1/2 lg:w-1/3">
+                <input type="text" id="search-input" placeholder="Search projects..." class="w-full bg-white text-gray-800 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors shadow-inner">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-6">
+        <!-- Dashboard Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h3 class="text-gray-500 text-sm font-medium">Total Projects</h3>
+                <p id="total-projects" class="text-2xl font-bold text-blue-600 mt-2">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h3 class="text-gray-500 text-sm font-medium">Total Cost (PHP)</h3>
+                <p id="total-cost" class="text-2xl font-bold text-blue-600 mt-2">₱0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h3 class="text-gray-500 text-sm font-medium">Average Cost (PHP)</h3>
+                <p id="average-cost" class="text-2xl font-bold text-blue-600 mt-2">₱0</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
+            <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
+                <div class="relative w-full md:w-auto">
+                    <select id="contractor-filter" class="appearance-none bg-white p-3 pr-10 rounded-lg text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 w-full">
+                        <option value="">All Contractors</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="relative w-full md:w-auto">
+                    <select id="year-filter" class="appearance-none bg-white p-3 pr-10 rounded-lg text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 w-full">
+                        <option value="">All Years</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Data Display - Card View -->
+        <div id="cards-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="no-results" class="hidden text-center text-gray-500 py-10">
+            <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="mt-4 text-lg">No projects found matching your criteria.</p>
+        </div>
+    </main>
+
+    <footer class="bg-white text-gray-500 text-sm text-center py-4 mt-8 shadow-inner border-t border-gray-200">
+        <p>Developed by Reymarc Jason T. Tampos</p>
+    </footer>
+
+    <script>
+        const projectData = [
+            { description: "Rehabilitation of Seawall at the Sites of Sampaguita Gardens, Barangay Poblacion, New Washington, Aklan", location: "Aklan", contractor: "GREENLAND BUILDERS", cost: 29399990.42, completionDate: "10/10/2024" },
+            { description: "Construction of Revetment Wall along Ibajay River, Brgy. Rizal, Ibajay, Aklan", location: "Aklan", contractor: "ALMANA CONSTRUCTION AND DEV'T CORPORATION", cost: 95335880.55, completionDate: "09/16/2024" },
+            { description: "Construction of Revetment Wall along Ibajay River, Barangay Polo, Ibajay, Aklan", location: "Aklan", contractor: "ALMANA CONSTRUCTION AND DEV'T CORPORATION", cost: 128763568.98, completionDate: "09/16/2024" },
+            { description: "Construction of Revetment Wall along Ibajay River, Ibajay, Aklan (Package 3)", location: "Aklan", contractor: "IBC INTERNATIONAL BUILDERS CORPORATION", cost: 121348746.07, completionDate: "08/19/2024" },
+            { description: "Rehabilitation of Seawall, Brgy. Tambak, New Washington, Aklan", location: "Aklan", contractor: "GREENLAND BUILDERS", cost: 29399995.16, completionDate: "08/14/2024" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Badiangan, Banga, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 28949980.16, completionDate: "07/19/2024" },
+            { description: "Construction of Revetment Wall along Aklan River, Brgy. Mobo, Kalibo, Aklan", location: "Aklan", contractor: "CLIFFORD CONSTRUCTION CORPORATION", cost: 28949995.94, completionDate: "07/09/2024" },
+            { description: "Construction of Revetment Wall along NHA Project Site, Brgy. Albasan, Numancia, Aklan", location: "Aklan", contractor: "GREAT PACIFIC BUILDERS AND GEN. CONTRACTOR INC.", cost: 48999994.12, completionDate: "06/18/2024" },
+            { description: "Construction of Revetment Wall along Aklan River, Brgy. Palale, Banga, Aklan", location: "Aklan", contractor: "PASTRANA CONSTRUCTION & SUPPLIES", cost: 28949793.71, completionDate: "06/18/2024" },
+            { description: "Construction of Malay CIS Bank Protection, Malay, Aklan", location: "Aklan", contractor: "J.C. TAMAYO ENTERPRISES", cost: 19917934.53, completionDate: "06/10/2024" },
+            { description: "Rehabilitation of Seawall, Sitio Baybay, Barangay Polo, New Washington, Aklan", location: "Aklan", contractor: "ST. TIMOTHY CONSTRUCTION CORPORATION / GREENLAND BUILDERS", cost: 72374994.45, completionDate: "05/20/2024" },
+            { description: "Rehabilitation of Seawall, Barangay Poblacion, New Washington, Aklan", location: "Aklan", contractor: "GREENLAND BUILDERS / MONOLITHIC CONSTRUCTION & CONCRETE PRODUCTS, INC.", cost: 72374990.05, completionDate: "04/30/2024" },
+            { description: "Construction of Revetment Wall along Jal-o River, Sitio Mapait, Barangay Aranas, Balete, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 39199794.21, completionDate: "04/24/2024" },
+            { description: "Rehabilitation of Revetment Wall along Jal-o River, Balete, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 49062232.76, completionDate: "04/24/2024" },
+            { description: "Construction of Revetment Wall along Jal-o River, Sitio Suwaragan, Barangay Calizo, Balete, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 39199936.73, completionDate: "04/24/2024" },
+            { description: "Construction of Revetment Wall along Malinao River, Brgy. Malandayon, Malinao, Aklan", location: "Aklan", contractor: "TOPMOST DEVELOPMENT & MKTG. CORP.", cost: 49499996.53, completionDate: "04/17/2024" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Daguitan, Banga, Aklan", location: "Aklan", contractor: "F. GURREA CONSTRUCTION, INCORPORATED", cost: 48999991.80, completionDate: "03/25/2024" },
+            { description: "Rehabilitation of Seawall, Sitio Dumlog, Barangay Tambak, New Washington, Aklan", location: "Aklan", contractor: "GREENLAND BUILDERS / MONOLITHIC CONSTRUCTION & CONCRETE PRODUCTS, INC.", cost: 48999990.69, completionDate: "03/18/2024" },
+            { description: "Rehabilitation of Seawall at the sites of NHA Housing Project and Gawad Kalinga Village, Barangay Fatima, New Washington, Aklan", location: "Aklan", contractor: "ST. TIMOTHY CONSTRUCTION CORPORATION", cost: 72742653.95, completionDate: "03/02/2024" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Pusiw, Numancia, Aklan", location: "Aklan", contractor: "GREAT PACIFIC BUILDERS AND GEN. CONTRACTOR INC.", cost: 86849862.21, completionDate: "02/01/2024" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Bakhaw Norte, Kalibo, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 48999993.67, completionDate: "01/22/2024" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Bakhaw Sur, Kalibo, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 29399989.61, completionDate: "11/23/2023" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Taba-ao, Banga, Aklan", location: "Aklan", contractor: "GREAT PACIFIC BUILDERS AND GEN. CONTRACTOR INC.", cost: 48999776.62, completionDate: "11/22/2023" },
+            { description: "Rehabilitation of Revetment Wall along Makato River (Makato Bypass Road), Barangay Poblacion, Makato, Aklan", location: "Aklan", contractor: "EDISON C BUILDERS & CONSTRUCTION SUPPLY", cost: 29392615.80, completionDate: "11/20/2023" },
+            { description: "Construction of Revetment Wall along Tangalan River, Sta. 0+000.00 to Sta. 0+337.00, Brgy. Tondog, Tangalan, Aklan", location: "Aklan", contractor: "ALPHA & OMEGA GEN. CONTRACTOR & DEVELOPMENT CORP.", cost: 48999981.58, completionDate: "11/20/2023" },
+            { description: "Construction of Revetment Wall along Ibajay River, Barangay Polo, Ibajay, Aklan", location: "Aklan", contractor: "MONOLITHIC CONSTRUCTION & CONCRETE PRODUCTS, INC.", cost: 86849991.39, completionDate: "11/20/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Lapnag, Banga, Aklan", location: "Aklan", contractor: "F & J GENERAL CONSTRUCTION AND SUPPLY CORPORATION", cost: 48249302.20, completionDate: "11/20/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Tinapuay, Banga, Aklan", location: "Aklan", contractor: "A.D. PENDON CONSTRUCTION & SUPPLY, INC.", cost: 48999997.71, completionDate: "10/25/2023" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Paningayan, Madalag, Aklan", location: "Aklan", contractor: "F & J GENERAL CONSTRUCTION AND SUPPLY CORPORATION", cost: 48999204.19, completionDate: "10/23/2023" },
+            { description: "Construction of Revetment Wall along Navitas Estuary, Brgy. Navitas, Numancia, Aklan", location: "Aklan", contractor: "VILLORENTE TWIN BUILDERS CORPORATION", cost: 9891863.68, completionDate: "10/20/2023" },
+            { description: "Construction of Revetment Wall along Tagbaya River, Barangay Tagbaya, Ibajay, Aklan", location: "Aklan", contractor: "GREAT PACIFIC BUILDERS AND GEN. CONTRACTOR INC. / C.S. GARCIA CONSTRUCTION CORPORATION", cost: 48999995.52, completionDate: "10/17/2023" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Sigcay, Banga, Aklan", location: "Aklan", contractor: "A.D. PENDON CONSTRUCTION & SUPPLY, INC.", cost: 48999545.82, completionDate: "10/16/2023" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Mobo, Kalibo, Aklan", location: "Aklan", contractor: "CLIFFORD CONSTRUCTION CORPORATION", cost: 48999989.53, completionDate: "10/16/2023" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Poblacion, Libacao, Aklan", location: "Aklan", contractor: "PATRILA BUILDERS, INC.", cost: 27419992.88, completionDate: "10/16/2023" },
+            { description: "Construction of Flood Control / Revetment Wall along Aklan River, Barangay Tinigaw, Kalibo, Aklan", location: "Aklan", contractor: "S.T. SALCEDO CONSTRUCTION CORP.", cost: 48999994.30, completionDate: "09/22/2023" },
+            { description: "Construction of Revetment Wall along Malinao River, Brgy. Banay-Banay, Malinao, Aklan (Package 2)", location: "Aklan", contractor: "SOLID MERCHANDISING", cost: 9899987.28, completionDate: "09/15/2023" },
+            { description: "Rehabilitation of Flood Control / Revetment Wall along Aklan River, Barangay Jumarap, Banga, Aklan", location: "Aklan", contractor: "EC BUILDERS", cost: 19583672.06, completionDate: "08/29/2023" },
+            { description: "Construction of Revetment Wall along Agbalili River, Barangay Poblacion, Altavas, Aklan", location: "Aklan", contractor: "TIBIAO-ANTIQUE N.K. ENTERPRISE, INC.", cost: 48249783.09, completionDate: "08/24/2023" },
+            { description: "Construction of Revetment Wall along Buruanga River, Poblacion, Buruanga, Aklan", location: "Aklan", contractor: "F. GURREA CONSTRUCTION, INCORPORATED", cost: 84299108.79, completionDate: "08/07/2023" },
+            { description: "Construction of Coastal Dike in Brgy. Songcolan, Batan, Aklan", location: "Aklan", contractor: "TIBIAO-ANTIQUE N.K. ENTERPRISE, INC.", cost: 40426458.54, completionDate: "05/30/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Sta. 8 + 107.75 - Sta. 8 + 680, Brgy. Tigayon, Kalibo, Aklan", location: "Aklan", contractor: "MONOLITHIC CONSTRUCTION & CONCRETE PRODUCTS, INC.", cost: 92777160.39, completionDate: "05/29/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Sitio Libtong, Brgy. Estancia, Kalibo, Aklan", location: "Aklan", contractor: "F & J GENERAL CONSTRUCTION AND SUPPLY CORPORATION", cost: 48249999.50, completionDate: "05/15/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Poblacion, Madalag, Aklan", location: "Aklan", contractor: "F & J GENERAL CONSTRUCTION AND SUPPLY CORPORATION", cost: 46648504.47, completionDate: "05/10/2023" },
+            { description: "Construction of Revetment Wall, Brgy. Songcolan, Batan, Aklan", location: "Aklan", contractor: "F. GURREA CONSTRUCTION, INCORPORATED", cost: 56814451.80, completionDate: "05/08/2023" },
+            { description: "Construction of Revetment Wall along Alimbo River (Upstream/Downstream), Brgy. Alimbo, Nabas, Aklan", location: "Aklan", contractor: "ALPHA & OMEGA GEN. CONTRACTOR & DEVELOPMENT CORP.", cost: 53743402.60, completionDate: "05/02/2023" },
+            { description: "Rehabilitation of Revetment Wall along Aklan River, Brgy. Daja Sur, Banga, Aklan", location: "Aklan", contractor: "G.F. ROVERO MERCHANDISING", cost: 19177758.11, completionDate: "04/17/2023" },
+            { description: "Construction of Revetment Wall along Ibajay River, Brgy. Laguinbanwa, Ibajay, Aklan", location: "Aklan", contractor: "SOLID MERCHANDISING / ALPHA & OMEGA GEN. CONTRACTOR & DEVELOPMENT CORP.", cost: 86849994.70, completionDate: "02/15/2023" },
+            { description: "Construction of Flood Control along Aslum River (Delta Permanent Opening), Barangay Aslum, Ibajay, Aklan", location: "Aklan", contractor: "ALCEL CONSTRUCTION", cost: 19799567.39, completionDate: "02/13/2023" },
+            { description: "Flood Control along Agbago-Aslum River, Ibajay, Aklan", location: "Aklan", contractor: "EC BUILDERS", cost: 14845000.06, completionDate: "02/13/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Brgy. Palale, Banga, Aklan", location: "Aklan", contractor: "UNITEC BUILDER, INCORPORATED", cost: 49954779.27, completionDate: "02/10/2023" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Bakhaw Sur, Kalibo, Aklan", location: "Aklan", contractor: "S.T. SALCEDO CONSTRUCTION CORP.", cost: 48999996.13, completionDate: "02/09/2023" },
+            { description: "Construction of Revetment Wall along Tangalan River, Brgy. Baybay, Tangalan, Aklan", location: "Aklan", contractor: "ST. TIMOTHY CONSTRUCTION CORPORATION", cost: 86849991.48, completionDate: "01/25/2023" },
+            { description: "Construction of Revetment Wall along Ibajay River, Sitio Banloc, Barangay Naile, Ibajay, Aklan", location: "Aklan", contractor: "FIRST MAKEEN CONSTRUCTION", cost: 19400000.00, completionDate: "11/02/2022" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Mina, Lezo, Aklan", location: "Aklan", contractor: "S.T. SALCEDO CONSTRUCTION CORP.", cost: 48999997.14, completionDate: "10/19/2022" },
+            { description: "Construction of Revetment Wall along Aklan River, Barangay Mobo, Kalibo, Aklan", location: "Aklan", contractor: "CLIFFORD CONSTRUCTION CORPORATION", cost: 48999996.04, completionDate: "09/26/2022" },
+            { description: "Construction of Revetment Wall along Aklan River, Brgy. Rivera, Libacao, Aklan", location: "Aklan", contractor: "PATRILA BUILDERS, INC.", cost: 59402499.64, completionDate: "07/27/2022" },
+            { description: "Construction of Flood Control Structure (Revetment Wall) along Aklan River, Barangay Sta. Cruz - Bigaa, Lezo, Aklan", location: "Aklan", contractor: "A.D. PENDON CONSTRUCTION & SUPPLY, INC.", cost: 93520048.17, completionDate: "07/13/2022" }
+        ];
+
+        // The sorting logic has been removed as the table view is gone.
+        const cardsView = document.getElementById('cards-view');
+        const searchInput = document.getElementById('search-input');
+        const contractorFilter = document.getElementById('contractor-filter');
+        const yearFilter = document.getElementById('year-filter');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const noResults = document.getElementById('no-results');
+
+        function formatCost(cost) {
+            return `₱${cost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+        }
+
+        function renderSummary(data) {
+            const totalProjects = data.length;
+            const totalCost = data.reduce((sum, item) => sum + item.cost, 0);
+            const averageCost = totalProjects > 0 ? totalCost / totalProjects : 0;
+            
+            document.getElementById('total-projects').textContent = totalProjects;
+            document.getElementById('total-cost').textContent = formatCost(totalCost);
+            document.getElementById('average-cost').textContent = formatCost(averageCost);
+        }
+
+        function renderCards(data) {
+            cardsView.innerHTML = '';
+            if (data.length === 0) return;
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-md p-6 flex flex-col justify-between border border-gray-200';
+                card.innerHTML = `
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">${item.description}</h3>
+                        <p class="text-sm text-gray-500 mb-2">Location: <span class="text-gray-700 font-medium">${item.location}</span></p>
+                        <p class="text-sm text-gray-500 mb-2">Contractor: <span class="text-gray-700 font-medium">${item.contractor}</span></p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <p class="text-lg font-bold text-blue-600">${formatCost(item.cost)}</p>
+                        <p class="text-sm text-gray-500 mt-1">Completed: ${item.completionDate}</p>
+                    </div>
+                `;
+                cardsView.appendChild(card);
+            });
+        }
+
+        function filterData() {
+            loadingOverlay.classList.remove('hidden');
+
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedContractor = contractorFilter.value;
+            const selectedYear = yearFilter.value;
+
+            let filteredData = projectData.filter(item => {
+                const matchesSearch = Object.values(item).some(value =>
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+                const matchesContractor = selectedContractor === '' || item.contractor === selectedContractor;
+                const matchesYear = selectedYear === '' || item.completionDate.includes(selectedYear);
+                return matchesSearch && matchesContractor && matchesYear;
+            });
+
+            renderSummary(filteredData);
+            renderCards(filteredData);
+            
+            if (filteredData.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            loadingOverlay.classList.add('hidden');
+        }
+
+        function setupFilters() {
+            const contractors = [...new Set(projectData.map(item => item.contractor))].sort();
+            contractors.forEach(contractor => {
+                const option = document.createElement('option');
+                option.value = contractor;
+                option.textContent = contractor;
+                contractorFilter.appendChild(option);
+            });
+
+            const years = [...new Set(projectData.map(item => new Date(item.completionDate).getFullYear().toString()))].sort().reverse();
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupFilters();
+            filterData();
+        });
+
+        // Event Listeners
+        searchInput.addEventListener('input', filterData);
+        contractorFilter.addEventListener('change', filterData);
+        yearFilter.addEventListener('change', filterData);
+    </script>
+</body>
+</html>
