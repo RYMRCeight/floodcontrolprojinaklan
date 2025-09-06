@@ -53,7 +53,7 @@
 
     <main class="container mx-auto p-4 md:p-6">
         <!-- Dashboard Summary -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                 <h3 class="text-gray-500 text-sm font-medium">Total Projects</h3>
                 <p id="total-projects" class="text-2xl font-bold text-blue-600 mt-2">0</p>
@@ -61,10 +61,6 @@
             <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                 <h3 class="text-gray-500 text-sm font-medium">Total Cost (PHP)</h3>
                 <p id="total-cost" class="text-2xl font-bold text-blue-600 mt-2">₱0</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-                <h3 class="text-gray-500 text-sm font-medium">Average Cost (PHP)</h3>
-                <p id="average-cost" class="text-2xl font-bold text-blue-600 mt-2">₱0</p>
             </div>
         </div>
 
@@ -173,7 +169,6 @@
             { description: "Construction of Flood Control Structure (Revetment Wall) along Aklan River, Barangay Sta. Cruz - Bigaa, Lezo, Aklan", location: "Aklan", contractor: "A.D. PENDON CONSTRUCTION & SUPPLY, INC.", cost: 93520048.17, completionDate: "07/13/2022" }
         ];
 
-        // The sorting logic has been removed as the table view is gone.
         const cardsView = document.getElementById('cards-view');
         const searchInput = document.getElementById('search-input');
         const contractorFilter = document.getElementById('contractor-filter');
@@ -184,15 +179,13 @@
         function formatCost(cost) {
             return `₱${cost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
         }
-
+        
         function renderSummary(data) {
             const totalProjects = data.length;
             const totalCost = data.reduce((sum, item) => sum + item.cost, 0);
-            const averageCost = totalProjects > 0 ? totalCost / totalProjects : 0;
             
             document.getElementById('total-projects').textContent = totalProjects;
             document.getElementById('total-cost').textContent = formatCost(totalCost);
-            document.getElementById('average-cost').textContent = formatCost(averageCost);
         }
 
         function renderCards(data) {
